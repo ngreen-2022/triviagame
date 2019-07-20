@@ -29,10 +29,19 @@ const GamePage = ({
     // isPlaying: false,
     // curQuestion: []
     answer: '',
-    isCorrect: null
+    isCorrect: null,
+    isDisabled: false
   });
 
-  const { endpoint, answer, isCorrect } = gameState;
+  const [timerState, setTimerState] = useState({
+    timer: 0,
+    isOn: false,
+    timerMsg: ''
+  });
+
+  const { endpoint, answer, isCorrect, isDisabled } = gameState;
+
+  const { timer, isOn, timerMsg } = timerState;
 
   const beginPlay = () => {
     // setPlaying(true);
@@ -40,8 +49,25 @@ const GamePage = ({
     socket.emit('begin game', true);
   };
 
+  const beginTimer = () => {
+    const start = Date.now();
+    const tStart = setInterval(() => {
+      const timer = Date.now() - start;
+      setTimerState({
+        ...timerState,
+        isOn: true,
+        timer
+      });
+    }, 1000);
+    setTimeout(() => {
+      clearInterval(tStart);
+      setTimerState({ ...timerState, isOn: false, timer: 0 });
+    }, 30000);
+  };
+
   const getQuestion = () => {
     const socket = socketIOClient(endpoint);
+    beginTimer();
     socket.emit('get question');
     console.log(curQuestion);
   };
@@ -49,7 +75,7 @@ const GamePage = ({
   // Runs when gamepage first loads
   useEffect(() => {
     const socket = socketIOClient(endpoint);
-    socket.on('begin game', isPlaying => {
+    socket.on('begin game', () => {
       //   setGameState({ ...gameState, isPlaying });
       loadGameState();
     });
@@ -90,7 +116,9 @@ const GamePage = ({
       <h2>{'isPlaying: ' + isPlaying}</h2>
       {isPlaying ? (
         <div className='currentGame'>
-          <button onClick={getQuestion}>Click to get a question</button>
+          <button onClick={getQuestion} disabled={isOn}>
+            Click to get a question
+          </button>
           <p>Your current score: {playerScore}</p>
         </div>
       ) : (
@@ -108,6 +136,7 @@ const GamePage = ({
               onChange={e => onChange(e)}
             />
           </form>
+          {timer}
         </Fragment>
       ) : (
         <h3>No current question</h3>
