@@ -40,7 +40,7 @@ const App = () => {
               {/* Playground */}
               <PrivateRouter exact path='/dashboard' component={Dashboard} />
               <PrivateRouter exact path='/findgame' component={FindGame} />
-              <PrivateRouter exact path='/play' component={GamePage} />
+              <PrivateRouter exact path='/play/:id' component={GamePage} />
             </Switch>
           </section>
         </Fragment>

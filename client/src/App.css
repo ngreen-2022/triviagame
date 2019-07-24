@@ -314,6 +314,7 @@ button {
 
 .navbar ul {
   display: flex;
+  margin: 0;
 }
 
 .navbar a {

@@ -17,6 +17,7 @@ export const ACCOUNT_DELETED = 'ACCOUNT_DELETED';
 
 // Game actions
 export const LOAD_GAME_STATE = 'LOAD_GAME_STATE';
+export const BEGIN_GAME = 'BEGIN_GAME';
 export const UPDATE_CURRENT_QUESTION = 'UPDATE_CURRENT_QUESTION';
 export const UPDATE_PLAYER_SCORE = 'UPDATE_PLAYER_SCORE';
 export const GAME_ERROR = 'GAME_ERROR';

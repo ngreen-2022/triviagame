@@ -6,11 +6,29 @@ const GameSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  isPlaying: {
+    type: Boolean
+  },
   isPublic: {
     type: Boolean,
     required: true
   },
-  players: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }],
+  // players: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }],
+  players: [
+    {
+      playerId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'user'
+      },
+      score: {
+        type: Number,
+        default: 0
+      }
+    }
+  ],
+  curQuestion: {
+    type: Object
+  },
   date: {
     type: Date,
     default: Date.now()

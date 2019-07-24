@@ -3,6 +3,7 @@ const router = express.Router();
 const auth = require('../../middleware/auth');
 const { check, validationResult } = require('express-validator');
 const uuidv4 = require('uuid/v4');
+const axios = require('axios');
 const Game = require('../../models/Game');
 
 // @route  GET api/game
@@ -61,12 +62,14 @@ router.post(
     try {
       // create the game information
       const gameFields = {};
-      const isPublic = req.body.isPublic == 'True';
+      const isPublic = req.body.isPublic === true;
       gameFields.isPublic = isPublic;
+      gameFields.isPlaying = false;
+      gameFields.curQuestion = {};
       gameFields.roomName = req.body.roomName;
       gameFields.owner = req.user.id;
       // push the creator userId onto the currentusers field
-      gameFields.players = [req.user.id];
+      gameFields.players = [{ playerId: req.user.id }];
 
       // create new game and save to database
       game = new Game(gameFields);
@@ -78,6 +81,71 @@ router.post(
     }
   }
 );
+
+// @route  PUT /api/game/:id
+// @desc   Update Score
+// @access Private
+router.put('/update/:id', auth, async (req, res) => {
+  try {
+    let game = await Game.findById(req.params.id);
+
+    if (!game) return res.status(400).json({ msg: 'Game not found ' });
+
+    const { score } = req.body;
+
+    game = await Game.findOneAndUpdate(
+      { 'players.playerId': req.user.id },
+      {
+        $set: {
+          'players.$.playerId': req.user.id,
+          'players.$.score': score
+        }
+      },
+      { new: true }
+    );
+
+    return res.json(game);
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
+// @route  PUT /api/game/:id
+// @desc   Add Player to Room
+// @access Private
+router.put('/join/:id', auth, async (req, res) => {
+  try {
+    const game = await Game.findById(req.params.id);
+
+    if (!game) return res.status(400).json({ msg: 'Game not found ' });
+
+    game.players.push({ playerId: req.user.id });
+
+    await game.save();
+    return res.json(game);
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
+// @route  PUT /api/game/:id
+// @desc   Update the current question
+// @access Private
+router.put('/:id', async (req, res) => {
+  try {
+    const game = await Game.findById(req.params.id);
+
+    const question = await axios.get('http://jservice.io/api/random');
+
+    game.curQuestion = question.data[0];
+    await game.save();
+    return res.json(game);
+  } catch (err) {
+    res.status(500).send('Server Error');
+  }
+});
 
 // @route  DELETE api/game/:id
 // @desc   Delete Game Session

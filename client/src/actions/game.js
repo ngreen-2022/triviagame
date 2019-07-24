@@ -8,8 +8,27 @@ import {
   LOAD_GAME_STATE,
   UPDATE_CURRENT_QUESTION,
   UPDATE_PLAYER_SCORE,
-  GAME_ERROR
+  GAME_ERROR,
+  BEGIN_GAME
 } from './types';
+
+export const createGame = data => async dispatch => {
+  try {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    };
+
+    const res = await axios.post('/api/game', data, config);
+
+    dispatch({ type: CREATE_GAME, payload: res.data });
+
+    loadGameState();
+  } catch (err) {
+    dispatch({ type: GAME_ERROR });
+  }
+};
 
 export const getGames = () => async dispatch => {
   try {
@@ -24,17 +43,32 @@ export const getGames = () => async dispatch => {
   }
 };
 
-export const loadGameState = () => dispatch => {
+export const loadGameState = gameId => async dispatch => {
   try {
-    dispatch({ type: LOAD_GAME_STATE });
+    const res = await axios.get(`/api/game/${gameId}`);
+
+    console.log('response' + res.data.curQuestion);
+
+    dispatch({ type: LOAD_GAME_STATE, payload: res.data });
   } catch (err) {
     dispatch({ type: GAME_ERROR });
   }
 };
 
-export const updateCurrentQuestion = question => dispatch => {
+export const beginGame = () => dispatch => {
   try {
-    dispatch({ type: UPDATE_CURRENT_QUESTION, payload: question[0] });
+    // we would need to update the game state in the database
+    dispatch({ type: BEGIN_GAME });
+  } catch (err) {
+    dispatch({ type: GAME_ERROR });
+  }
+};
+
+export const updateCurrentQuestion = question => async dispatch => {
+  try {
+    // const res = await axios.put(`/api/game/${gameId}`);
+
+    dispatch({ type: UPDATE_CURRENT_QUESTION, payload: question });
   } catch (err) {
     dispatch({ type: GAME_ERROR });
   }
