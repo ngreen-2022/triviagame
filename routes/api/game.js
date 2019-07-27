@@ -147,6 +147,29 @@ router.put('/:id', async (req, res) => {
   }
 });
 
+// @route  GET /api/game/:gameid/:playerid
+// @desc   Get score of player
+// @access Private
+router.get('/:gameid/:playerid', async (req, res) => {
+  try {
+    const game = await Game.findById(req.params.gameid);
+
+    let score = 0;
+
+    console.log(game.players);
+
+    for (x = 0; x < game.players.length; x++) {
+      if (game.players[x].playerId.toString() === req.params.playerid) {
+        score = game.players[x].score;
+      }
+    }
+
+    return res.json(score);
+  } catch (error) {
+    res.status(500).send('Server Error');
+  }
+});
+
 // @route  DELETE api/game/:id
 // @desc   Delete Game Session
 // @access Private
