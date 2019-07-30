@@ -314,6 +314,7 @@ button {
 
 .navbar ul {
   display: flex;
+  margin: 0;
 }
 
 .navbar a {
@@ -574,4 +575,16 @@ button {
   .post button {
     padding: 0.3rem 0.4rem;
   }
+}
+
+.gameList {
+  display: flex;
+}
+
+.gameItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.7rem 2rem;
+  width: 100%;
 }

@@ -8,6 +8,7 @@ import Alert from './components/layout/Alert';
 import Dashboard from './components/dashboard/Dashboard';
 import PrivateRouter from './components/routing/PrivateRouter';
 import GamePage from './components/game/GamePage';
+import FindGame from './components/game/FindGame';
 // Redux
 import { Provider } from 'react-redux';
 import store from './store';
@@ -38,7 +39,8 @@ const App = () => {
               <Route exact path='/login' component={Login} />
               {/* Playground */}
               <PrivateRouter exact path='/dashboard' component={Dashboard} />
-              <PrivateRouter exact path='/play' component={GamePage} />
+              <PrivateRouter exact path='/findgame' component={FindGame} />
+              <PrivateRouter exact path='/play/:id' component={GamePage} />
             </Switch>
           </section>
         </Fragment>

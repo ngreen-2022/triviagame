@@ -17,6 +17,17 @@ export const ACCOUNT_DELETED = 'ACCOUNT_DELETED';
 
 // Game actions
 export const LOAD_GAME_STATE = 'LOAD_GAME_STATE';
+export const BEGIN_GAME = 'BEGIN_GAME';
 export const UPDATE_CURRENT_QUESTION = 'UPDATE_CURRENT_QUESTION';
 export const UPDATE_PLAYER_SCORE = 'UPDATE_PLAYER_SCORE';
 export const GAME_ERROR = 'GAME_ERROR';
+
+// Gamepage actions
+export const GET_GAMES = 'GET_GAMES';
+export const GET_GAME_BY_ID = 'GET_GAME_BY_ID';
+export const DELETE_GAME_BY_ID = 'DELETE_GAME_BY_ID';
+export const CREATE_GAME = 'CREATE_GAME';
+export const JOIN_GAME = 'JOIN_GAME';
+export const GET_GAMES_ERROR = 'GET_GAMES_ERROR';
+export const GET_USER_SCORE = 'GET_USER_SCORE';
+export const LEAVE_GAME = 'LEAVE_GAME';

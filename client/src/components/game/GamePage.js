@@ -1,12 +1,17 @@
 import React, { useState, useEffect, Fragment } from 'react';
+import { LinkContainer } from 'react-router-bootstrap';
 import { connect } from 'react-redux';
-import Timer from './Timer';
+import { Link } from 'react-router-dom';
+import PlayerList from './PlayerList';
 import PropTypes from 'prop-types';
 import socketIOClient from 'socket.io-client';
+import Button from 'react-bootstrap/Button';
 import {
   updateCurrentQuestion,
   updatePlayerScore,
-  loadGameState
+  loadGameState,
+  beginGame,
+  leaveGame
 } from '../../actions/game';
 socketIOClient({ transports: ['websocket'] });
 
@@ -20,60 +25,117 @@ const GamePage = ({
   isPlaying,
   playerScore,
   curQuestion,
+  currentPlayers,
   updateCurrentQuestion,
   updatePlayerScore,
-  loadGameState
+  loadGameState,
+  beginGame,
+  leaveGame,
+  match
 }) => {
   const [gameState, setGameState] = useState({
     endpoint: 'http://localhost:5000',
     // isPlaying: false,
     // curQuestion: []
     answer: '',
-    isCorrect: null
+    isCorrect: null,
+    isDisabled: false,
+    gameId: match.params.id
   });
 
-  const { endpoint, answer, isCorrect } = gameState;
+  const [timerState, setTimerState] = useState({
+    timer: 0,
+    isOn: false,
+    timerMsg: ''
+  });
+
+  const { endpoint, answer, gameId } = gameState;
+
+  const { timer, isOn } = timerState;
+
+  useEffect(() => {
+    const socket = socketIOClient(endpoint);
+    socket.emit('new_player_joining', gameId);
+    console.log('client initial load');
+    loadGameState(gameId);
+    socket.emit('kill_socket', gameId);
+  }, []);
+
+  useEffect(() => {
+    const socket = socketIOClient(endpoint);
+
+    socket.emit('room', gameId);
+    socket.on('give question', question => {
+      updateCurrentQuestion(question);
+    });
+    socket.on('new_player_loaded', () => {
+      loadGameState(gameId);
+    });
+    socket.on('start game', () => {
+      setTimeout(() => {
+        loadGameState(gameId);
+      }, 1000);
+    });
+    socket.on('player_left', () => {
+      setTimeout(() => {
+        loadGameState(gameId);
+      }, 1000);
+    });
+    // socket.on('give_scores', () => {
+    //   loadGameState(gameId);
+    // });
+    // socket.on('give_scores', () => {
+    //   console.log('received ping');
+    //   loadGameState(gameId);
+    // });
+    return function cleanup() {
+      socket.emit('kill_socket', gameId);
+    };
+  }, [curQuestion]);
 
   const beginPlay = () => {
-    // setPlaying(true);
+    beginGame(gameId);
     const socket = socketIOClient(endpoint);
-    socket.emit('begin game', true);
+    socket.emit('begin game', gameId);
+    socket.emit('kill_socket', gameId);
+  };
+
+  const beginTimer = () => {
+    const start = Date.now();
+    const tStart = setInterval(() => {
+      const timer = Date.now() - start;
+      setTimerState({
+        ...timerState,
+        isOn: true,
+        timer
+      });
+    }, 1000);
+    setTimeout(() => {
+      clearInterval(tStart);
+      setTimerState({ ...timerState, isOn: false, timer: 0 });
+    }, 30000);
   };
 
   const getQuestion = () => {
     const socket = socketIOClient(endpoint);
-    socket.emit('get question');
+    beginTimer();
+
     console.log(curQuestion);
+
+    socket.emit('get question', gameId);
+    socket.emit('kill_socket', gameId);
   };
-
-  // Runs when gamepage first loads
-  useEffect(() => {
-    const socket = socketIOClient(endpoint);
-    socket.on('begin game', isPlaying => {
-      //   setGameState({ ...gameState, isPlaying });
-      loadGameState();
-    });
-  }, []);
-
-  // Runs continually to check question status
-  useEffect(() => {
-    const socket = socketIOClient(endpoint);
-    socket.on('get question', question => {
-      console.log(question);
-      //   setGameState({ ...gameState, isPlaying: true, curQuestion: question });
-      updateCurrentQuestion(question);
-    });
-  }, []);
 
   const onSubmit = e => {
     // call action here to register answer
     // we will need to check the answer, can probably do that here
     e.preventDefault();
     if (answer === curQuestion.answer) {
+      const socket = socketIOClient(endpoint);
       setGameState({ ...gameState, isCorrect: true });
       // dispatch action to update player score here
-      console.log(curQuestion.value);
-      updatePlayerScore(curQuestion.value);
+      updatePlayerScore(curQuestion.value, gameId);
+      socket.emit('update_scores', gameId);
       console.log('Correct');
     } else {
       setGameState({ ...gameState, isCorrect: false });
@@ -84,13 +146,21 @@ const GamePage = ({
   const onChange = e =>
     setGameState({ ...gameState, [e.target.name]: e.target.value });
 
+  const onLeave = () => {
+    const socket = socketIOClient(endpoint);
+    leaveGame(gameId);
+    socket.emit('leave_page', match.params.id);
+  };
+
   return (
     <div>
       <button onClick={beginPlay}>Begin playing</button>
       <h2>{'isPlaying: ' + isPlaying}</h2>
       {isPlaying ? (
         <div className='currentGame'>
-          <button onClick={getQuestion}>Click to get a question</button>
+          <button onClick={getQuestion} disabled={isOn}>
+            Click to get a question
+          </button>
           <p>Your current score: {playerScore}</p>
         </div>
       ) : (
@@ -99,6 +169,7 @@ const GamePage = ({
       {curQuestion !== undefined ? (
         <Fragment>
           <h3>Current Question: {curQuestion.question}</h3>
+          <h3>Number of players: {currentPlayers.length} </h3>
           <form onSubmit={e => onSubmit(e)}>
             <input
               type='text'
@@ -108,6 +179,11 @@ const GamePage = ({
               onChange={e => onChange(e)}
             />
           </form>
+          {timer}
+          <LinkContainer to='/findgame'>
+            <Button onClick={e => onLeave(e)}>Leave Game</Button>
+          </LinkContainer>
+          <PlayerList />
         </Fragment>
       ) : (
         <h3>No current question</h3>
@@ -121,10 +197,17 @@ GamePage.propTypes = {};
 const mapStateToProps = state => ({
   isPlaying: state.game.isPlaying,
   playerScore: state.game.playerScore,
-  curQuestion: state.game.curQuestion
+  curQuestion: state.game.curQuestion,
+  currentPlayers: state.game.currentPlayers
 });
 
 export default connect(
   mapStateToProps,
-  { updateCurrentQuestion, loadGameState, updatePlayerScore }
+  {
+    updateCurrentQuestion,
+    loadGameState,
+    updatePlayerScore,
+    beginGame,
+    leaveGame
+  }
 )(GamePage);
