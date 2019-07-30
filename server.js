@@ -38,6 +38,19 @@ const io = socketIO(server, {
 });
 
 io.on('connection', socket => {
+  socket.on('new_player_joining', async room => {
+    try {
+      console.log('new player joining');
+      socket.to(room).emit('new_player_loaded');
+    } catch (err) {
+      console.log('err: ' + err.message);
+    }
+  });
+
+  socket.on('update_scores', room => {
+    socket.to(room).emit('give_scores');
+  });
+
   socket.on('room', room => {
     console.log('joining room: ' + room);
     socket.join(room);
@@ -57,6 +70,7 @@ io.on('connection', socket => {
           });
         }
       });
+    socket.to(room).emit('player_left');
   });
 
   socket.on('kill_socket', room => {
@@ -84,6 +98,8 @@ io.on('connection', socket => {
     });
     try {
       const res = await axios.put(`http://localhost:5000/api/game/${room}`);
+
+      console.log(res.data.curQuestion);
 
       socket.to(room).emit('give question', res.data.curQuestion);
     } catch (err) {

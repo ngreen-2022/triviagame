@@ -27,4 +27,7 @@ export const GET_GAMES = 'GET_GAMES';
 export const GET_GAME_BY_ID = 'GET_GAME_BY_ID';
 export const DELETE_GAME_BY_ID = 'DELETE_GAME_BY_ID';
 export const CREATE_GAME = 'CREATE_GAME';
+export const JOIN_GAME = 'JOIN_GAME';
 export const GET_GAMES_ERROR = 'GET_GAMES_ERROR';
+export const GET_USER_SCORE = 'GET_USER_SCORE';
+export const LEAVE_GAME = 'LEAVE_GAME';

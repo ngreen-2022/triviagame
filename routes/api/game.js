@@ -5,6 +5,7 @@ const { check, validationResult } = require('express-validator');
 const uuidv4 = require('uuid/v4');
 const axios = require('axios');
 const Game = require('../../models/Game');
+const User = require('../../models/User');
 
 // @route  GET api/game
 // @desc   Get current games
@@ -30,7 +31,7 @@ router.get('/:id', auth, async (req, res) => {
 
     res.json(game);
   } catch (err) {
-    console.error(err.message);
+    console.error('from route !!' + err.message);
     if (err.kind === 'ObjectId') {
       return res.status(400).json({ msg: 'Game not found' });
     }
@@ -69,7 +70,7 @@ router.post(
       gameFields.roomName = req.body.roomName;
       gameFields.owner = req.user.id;
       // push the creator userId onto the currentusers field
-      gameFields.players = [{ playerId: req.user.id }];
+      gameFields.players = [];
 
       // create new game and save to database
       game = new Game(gameFields);
@@ -81,6 +82,50 @@ router.post(
     }
   }
 );
+
+// @route PUT /api/game/playing/:id
+// @desc      Set gamestate to playing
+// @access    Private
+router.put('/playing/:id', auth, async (req, res) => {
+  try {
+    let game = await Game.findById(req.params.id);
+
+    if (!game) return res.status(400).json({ msg: 'Game not found' });
+
+    game = await Game.findOneAndUpdate(
+      { _id: req.params.id },
+      { $set: { isPlaying: true } },
+      { new: true }
+    );
+
+    return res.json(game);
+  } catch (err) {
+    return res.status(500).send('Server Error');
+  }
+});
+
+// @route PUT /api/game/player/:gameid/:playerid
+// @desc      Get player score
+// @access    Private
+router.get('/player/:gameid/:playerid', auth, async (req, res) => {
+  try {
+    let game = await Game.findById(req.params.gameid);
+
+    if (!game) return res.status(400).json({ msg: 'Game not found' });
+
+    let score = 0;
+
+    for (player in game.players) {
+      if (player.playerId === req.params.playerid) {
+        score = player.score;
+      }
+    }
+
+    return res.json(score);
+  } catch (err) {
+    return res.status(500).send('Server Error');
+  }
+});
 
 // @route  PUT /api/game/:id
 // @desc   Update Score
@@ -96,8 +141,8 @@ router.put('/update/:id', auth, async (req, res) => {
     game = await Game.findOneAndUpdate(
       { 'players.playerId': req.user.id },
       {
-        $set: {
-          'players.$.playerId': req.user.id,
+        $inc: {
+          // 'players.$.playerId': req.user.id,
           'players.$.score': score
         }
       },
@@ -111,6 +156,26 @@ router.put('/update/:id', auth, async (req, res) => {
   }
 });
 
+router.put('/leave/:id', auth, async (req, res) => {
+  try {
+    let game = await Game.findById(req.params.id);
+
+    if (!game) return res.status(400).json({ msg: 'Game not found' });
+
+    game = await Game.findOneAndUpdate(
+      { 'players.playerId': req.user.id },
+      { $pull: { players: { playerId: req.user.id } } },
+      { new: true }
+    );
+
+    await game.save();
+    return res.json(game);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send('Server error');
+  }
+});
+
 // @route  PUT /api/game/:id
 // @desc   Add Player to Room
 // @access Private
@@ -120,7 +185,15 @@ router.put('/join/:id', auth, async (req, res) => {
 
     if (!game) return res.status(400).json({ msg: 'Game not found ' });
 
-    game.players.push({ playerId: req.user.id });
+    const user = await User.findById(req.user.id).select('-password');
+
+    const newPlayer = {
+      playerId: req.user.id,
+      playerName: user.name,
+      playerAvatar: user.avatar
+    };
+
+    game.players.push(newPlayer);
 
     await game.save();
     return res.json(game);
@@ -164,7 +237,11 @@ router.get('/:gameid/:playerid', async (req, res) => {
       }
     }
 
-    return res.json(score);
+    const data = {
+      score
+    };
+
+    return res.json(data);
   } catch (error) {
     res.status(500).send('Server Error');
   }

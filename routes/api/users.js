@@ -69,21 +69,21 @@ router.post(
       // Return jsonwebtoken
       // Create payload
       const payload = {
-          user: {
-              id: user.id
-          }
-      }
+        user: {
+          id: user.id
+        }
+      };
 
       // Now must sign token: pass in payload, secret, expiration, callback get error or token, if no err, send to client
       jwt.sign(
-        payload, 
+        payload,
         config.get('jwtSecret'),
         { expiresIn: 360000 },
         (err, token) => {
-            if(err) throw err;
-            res.json({ token });
-        });
-
+          if (err) throw err;
+          res.json({ token });
+        }
+      );
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server error');

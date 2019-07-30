@@ -4,17 +4,31 @@ import { Link, Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Spinner from '../layout/Spinner';
 // Actions
-import { getGames, createGame, loadGameState } from '../../actions/game';
+import {
+  getGames,
+  createGame,
+  loadGameState,
+  joinGame
+} from '../../actions/game';
 // Bootstrap
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 
-const FindGame = ({ gamesList, gameId, loading, getGames, createGame }) => {
+const FindGame = ({
+  gamesList,
+  gameId,
+  loading,
+  getGames,
+  createGame,
+  joinGame
+}) => {
   const [findState, setFindState] = useState({
     modalState: false,
     roomName: '',
-    isPublic: true
+    isPublic: true,
+    gameId: '',
+    inGame: false
   });
 
   const { modalState, roomName, isPublic } = findState;
@@ -41,8 +55,22 @@ const FindGame = ({ gamesList, gameId, loading, getGames, createGame }) => {
 
     // need create game action
     createGame(data);
-    getGames();
+    setTimeout(() => {
+      getGames();
+    }, 1000);
   };
+
+  const joinRoom = (e, id) => {
+    e.preventDefault();
+
+    joinGame(id);
+
+    setFindState({ ...findState, gameId: id, inGame: true });
+  };
+
+  if (findState.inGame) {
+    return <Redirect to={`/play/${findState.gameId}`} />;
+  }
 
   return (
     <div>
@@ -64,14 +92,12 @@ const FindGame = ({ gamesList, gameId, loading, getGames, createGame }) => {
                   <i className='fas fa-lock' /> Private
                 </span>
               )}
-              <Link
+              <Button
                 className='btn btn-success'
-                to={{
-                  pathname: `/play/${game._id}`
-                }}
+                onClick={e => joinRoom(e, game._id)}
               >
-                <span className='text-center'>Join Game</span>
-              </Link>
+                Join Game
+              </Button>
             </div>
           </div>
         ))}
@@ -131,5 +157,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { getGames, createGame }
+  { getGames, createGame, joinGame }
 )(FindGame);
