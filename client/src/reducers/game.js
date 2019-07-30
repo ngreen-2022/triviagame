@@ -17,12 +17,12 @@ import {
 const initialState = {
   gamesList: [],
   gameId: '',
-  loading: false,
+  loading: true,
   // currentGame: null,
   currentPlayers: [],
   isPlaying: false,
   playerScore: 0,
-  curQuestion: {},
+  curQuestion: null,
   sendChange: false
 };
 
@@ -70,7 +70,12 @@ export default function(state = initialState, action) {
     case BEGIN_GAME:
       return { ...state, isPlaying: payload.isPlaying };
     case UPDATE_CURRENT_QUESTION:
-      return { ...state, isPlaying: true, curQuestion: payload };
+      return {
+        ...state,
+        isPlaying: true,
+        curQuestion: payload,
+        loading: false
+      };
     case UPDATE_PLAYER_SCORE:
       return {
         ...state,

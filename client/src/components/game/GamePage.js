@@ -6,6 +6,7 @@ import PlayerList from './PlayerList';
 import PropTypes from 'prop-types';
 import socketIOClient from 'socket.io-client';
 import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 import {
   updateCurrentQuestion,
   updatePlayerScore,
@@ -24,6 +25,7 @@ socketIOClient.Manager('http://localhost:5000', {
 const GamePage = ({
   isPlaying,
   playerScore,
+  loading,
   curQuestion,
   currentPlayers,
   updateCurrentQuestion,
@@ -90,6 +92,7 @@ const GamePage = ({
     // });
     return function cleanup() {
       socket.emit('kill_socket', gameId);
+      // leaveGame(gameId);
     };
   }, [curQuestion]);
 
@@ -153,35 +156,49 @@ const GamePage = ({
   };
 
   return (
-    <div>
-      <button onClick={beginPlay}>Begin playing</button>
+    <div className='game'>
+      <Button className='game-buttons' onClick={beginPlay}>
+        Begin playing
+      </Button>
       <h2>{'isPlaying: ' + isPlaying}</h2>
       {isPlaying ? (
-        <div className='currentGame'>
-          <button onClick={getQuestion} disabled={isOn}>
-            Click to get a question
-          </button>
+        <div className='get-question'>
+          <Button
+            className='game-buttons'
+            onClick={getQuestion}
+            disabled={isOn}
+          >
+            Get a question
+          </Button>
           <p>Your current score: {playerScore}</p>
         </div>
       ) : (
         <h3>No one currently playing</h3>
       )}
-      {curQuestion !== undefined ? (
+      {curQuestion !== undefined && curQuestion !== null ? (
         <Fragment>
-          <h3>Current Question: {curQuestion.question}</h3>
-          <h3>Number of players: {currentPlayers.length} </h3>
-          <form onSubmit={e => onSubmit(e)}>
-            <input
-              type='text'
-              placeholder='Answer here...'
-              name='answer'
-              value={answer}
-              onChange={e => onChange(e)}
-            />
-          </form>
-          {timer}
+          <div>
+            <h3 className='game-question'>
+              Current Question: {curQuestion.question}
+            </h3>
+            <h3>Number of players: {currentPlayers.length} </h3>
+            <Form className='game-answer' onSubmit={e => onSubmit(e)}>
+              <Form.Group controlId='answer'>
+                <Form.Control
+                  type='text'
+                  placeholder='Answer here...'
+                  name='answer'
+                  value={answer}
+                  onChange={e => onChange(e)}
+                />
+              </Form.Group>
+            </Form>
+            {timer}
+          </div>
           <LinkContainer to='/findgame'>
-            <Button onClick={e => onLeave(e)}>Leave Game</Button>
+            <Button className='game-buttons' onClick={e => onLeave(e)}>
+              Leave Game
+            </Button>
           </LinkContainer>
           <PlayerList />
         </Fragment>
@@ -198,7 +215,8 @@ const mapStateToProps = state => ({
   isPlaying: state.game.isPlaying,
   playerScore: state.game.playerScore,
   curQuestion: state.game.curQuestion,
-  currentPlayers: state.game.currentPlayers
+  currentPlayers: state.game.currentPlayers,
+  loading: state.game.loading
 });
 
 export default connect(
