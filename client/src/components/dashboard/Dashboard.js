@@ -4,7 +4,8 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getCurrentProfile, deleteAccount } from '../../actions/profile';
 import Spinner from '../layout/Spinner';
-import DashboardActions from './DashboardActions';
+import LeaderBoard from './LeaderBoard';
+
 
 const Dashboard = ({
   getCurrentProfile,
@@ -26,7 +27,7 @@ const Dashboard = ({
       </p>
       {profile !== null ? (
         <Fragment>
-          <DashboardActions />
+          <LeaderBoard/>
           <div className='my-2'>
             <button className='btn btn-danger' onClick={() => deleteAccount()}>
               <i className='fas fa-user-minus' /> Delete My Account
@@ -37,6 +38,7 @@ const Dashboard = ({
         <Fragment>
           <p>You have not yet created a profile, please add some info!</p>
           {/* WILL NEED LINK TO CREATE PROFILE HERE */}
+          <LeaderBoard/>
         </Fragment>
       )}
     </Fragment>
