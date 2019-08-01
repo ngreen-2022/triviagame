@@ -33,6 +33,9 @@ const ProfileSchema = new mongoose.Schema({
   date: {
     type: Date,
     default: Date.now
+  },
+  points:{
+    type: Number 
   }
 });
 
