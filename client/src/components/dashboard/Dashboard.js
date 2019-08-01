@@ -21,18 +21,19 @@ const Dashboard = ({
     <Spinner />
   ) : (
     <Fragment>
-      <h1 className='large text-primary'>Dashboard</h1>
+      <h1 className='lg text-primary'>Dashboard</h1>
       <p className='lead'>
         <i className='fas fa-user'> Welcome {user && user.name}</i>
       </p>
       {profile !== null ? (
-        <Fragment>
-          <LeaderBoard/>
-          <div className='my-2'>
+          <Fragment>
+           <LeaderBoard/>
+          <div className=''>
             <button className='btn btn-danger' onClick={() => deleteAccount()}>
               <i className='fas fa-user-minus' /> Delete My Account
             </button>
           </div>
+          
         </Fragment>
       ) : (
         <Fragment>
