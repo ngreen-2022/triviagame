@@ -11,7 +11,7 @@ const initialState = {
   // Will make request and pull all profile data in this profile object
   profile: null,
   // Will be for the list of profiles
-  profiles: [],
+  profiles: [0,0,0,0,0],
   repos: [],
   loading: true,
   error: {}
