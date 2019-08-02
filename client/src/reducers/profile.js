@@ -4,7 +4,8 @@ import {
   GET_REPOS,
   PROFILE_ERROR,
   CLEAR_PROFILE,
-  UPDATE_PROFILE
+  UPDATE_PROFILE,
+  BEGIN_PROFILE_ACTION
 } from '../actions/types';
 
 const initialState = {
@@ -39,11 +40,15 @@ export default function(state = initialState, action) {
         error: payload,
         loading: false
       };
-    case CLEAR_PROFILE:
-      return {
+    case BEGIN_PROFILE_ACTION:
+      return{
         ...state,
+<<<<<<< HEAD
         profile: null,
         loading: false
+=======
+        loading: true
+>>>>>>> 33389d2b39cf458376506696ff4df15a358a30e9
       };
     default:
       return state;
