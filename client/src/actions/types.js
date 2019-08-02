@@ -31,3 +31,4 @@ export const JOIN_GAME = 'JOIN_GAME';
 export const GET_GAMES_ERROR = 'GET_GAMES_ERROR';
 export const GET_USER_SCORE = 'GET_USER_SCORE';
 export const LEAVE_GAME = 'LEAVE_GAME';
+export const BEGIN_PROFILE_ACTION = 'BEGIN_PROFILE_ACTION';

@@ -1,19 +1,23 @@
-import React, { useEffect, Fragment } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import getProfiles from '../../actions/types';
+import React, {useEffect} from 'react';
+import { useSelector, useDispatch} from 'react-redux';
+import { getProfiles} from '../../actions/profile';
+import Spinner from '../layout/Spinner';
 
 function LeaderBoard() {
-  const profiles = useSelector(state => state.GET_PROFILES); //useSelector (takes in state => state.ANYTHING IN THE APP THAT IS A STATE)
-  const dispatch = useDispatch();                      //useDispatch() allows us to dispatch actions
-  
-  // <button onClick={() => dispatch(getProfiles())}>get profiles</button>
-  return (
+     
+ const profiles = useSelector(state => state.profile.profiles); //useSelector (takes in state => state.ANYTHING IN THE APP THAT IS A STATE)
+ const loading = useSelector(state => state.profile.profiles.loading);
+ const dispatch = useDispatch();
+ dispatch(getProfiles())
+
+ 
+  return loading === true ? (
+    <Spinner />
+  ) : (
     <div className="LeaderBoard">
       <h1>LeaderBoard </h1>
       
-      <ul>{profiles}</ul>
-      
-      
+      { console.log(JSON.parse(profiles.profiles.highScore.value)) }
       
     </div>
   );

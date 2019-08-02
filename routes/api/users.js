@@ -56,7 +56,8 @@ router.post(
         name,
         email,
         avatar,
-        password
+        password,
+        highScore
       });
 
       // Encrypt password

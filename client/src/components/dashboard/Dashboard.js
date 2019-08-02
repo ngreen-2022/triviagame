@@ -1,4 +1,4 @@
-import React, { useEffect, Fragment } from 'react';
+import React, { useEffect, Fragment, Button } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -27,7 +27,7 @@ const Dashboard = ({
       </p>
       {profile !== null ? (
           <Fragment>
-           <LeaderBoard/>
+           
           <div className=''>
             <button className='btn btn-danger' onClick={() => deleteAccount()}>
               <i className='fas fa-user-minus' /> Delete My Account
@@ -38,8 +38,8 @@ const Dashboard = ({
       ) : (
         <Fragment>
           <p>You have not yet created a profile, please add some info!</p>
-          {/* WILL NEED LINK TO CREATE PROFILE HERE */}
           <LeaderBoard/>
+          
         </Fragment>
       )}
     </Fragment>

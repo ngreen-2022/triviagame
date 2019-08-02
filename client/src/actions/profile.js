@@ -7,7 +7,8 @@ import {
   PROFILE_ERROR,
   UPDATE_PROFILE,
   CLEAR_PROFILE,
-  ACCOUNT_DELETED
+  ACCOUNT_DELETED,
+  BEGIN_PROFILE_ACTION
 } from './types';
 
 // Get the current user's profile
@@ -30,7 +31,8 @@ export const getCurrentProfile = () => async dispatch => {
 // Get all profiles
 export const getProfiles = () => async dispatch => {
   dispatch({ type: CLEAR_PROFILE });
-
+  dispatch({type: BEGIN_PROFILE_ACTION});
+  
   try {
     const res = await axios.get('/api/profile');
 
