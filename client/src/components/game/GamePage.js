@@ -3,6 +3,7 @@ import { LinkContainer } from 'react-router-bootstrap';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import PlayerList from './PlayerList';
+import GameButtons from './GameButtons';
 import PropTypes from 'prop-types';
 import socketIOClient from 'socket.io-client';
 import Button from 'react-bootstrap/Button';
@@ -45,21 +46,13 @@ const GamePage = ({
     gameId: match.params.id
   });
 
-  const [timerState, setTimerState] = useState({
-    timer: 0,
-    isOn: false,
-    timerMsg: ''
-  });
-
   const { endpoint, answer, gameId } = gameState;
-
-  const { timer, isOn } = timerState;
 
   useEffect(() => {
     const socket = socketIOClient(endpoint);
-    socket.emit('new_player_joining', gameId);
-    // console.log('client initial load');
-    loadGameState(gameId);
+    socket.emit('new player', gameId);
+    console.log('client initial load');
+    // loadGameState(gameId);
     socket.emit('kill_socket', gameId);
   }, []);
 
@@ -70,9 +63,7 @@ const GamePage = ({
     socket.on('give question', question => {
       updateCurrentQuestion(question);
     });
-    socket.on('new_player_loaded', () => {
-      loadGameState(gameId);
-    });
+
     socket.on('start game', () => {
       setTimeout(() => {
         loadGameState(gameId);
@@ -83,51 +74,10 @@ const GamePage = ({
         loadGameState(gameId);
       }, 1000);
     });
-    // socket.on('give_scores', () => {
-    //   loadGameState(gameId);
-    // });
-    // socket.on('give_scores', () => {
-    //   console.log('received ping');
-    //   loadGameState(gameId);
-    // });
     return function cleanup() {
       socket.emit('kill_socket', gameId);
-      // leaveGame(gameId);
     };
-  }, [curQuestion]);
-
-  const beginPlay = () => {
-    beginGame(gameId);
-    const socket = socketIOClient(endpoint);
-    socket.emit('begin game', gameId);
-    socket.emit('kill_socket', gameId);
-  };
-
-  const beginTimer = () => {
-    const start = Date.now();
-    const tStart = setInterval(() => {
-      const timer = Date.now() - start;
-      setTimerState({
-        ...timerState,
-        isOn: true,
-        timer
-      });
-    }, 1000);
-    setTimeout(() => {
-      clearInterval(tStart);
-      setTimerState({ ...timerState, isOn: false, timer: 0 });
-    }, 30000);
-  };
-
-  const getQuestion = () => {
-    const socket = socketIOClient(endpoint);
-    beginTimer();
-
-    console.log(curQuestion);
-
-    socket.emit('get question', gameId);
-    socket.emit('kill_socket', gameId);
-  };
+  }, []);
 
   const onSubmit = e => {
     // call action here to register answer
@@ -149,62 +99,38 @@ const GamePage = ({
   const onChange = e =>
     setGameState({ ...gameState, [e.target.name]: e.target.value });
 
-  const onLeave = () => {
-    const socket = socketIOClient(endpoint);
-    leaveGame(gameId);
-    socket.emit('leave_page', match.params.id);
-  };
-
   return (
     <div className='game'>
-      <Button className='game-buttons' onClick={beginPlay}>
-        Begin playing
-      </Button>
-      <h2>{'isPlaying: ' + isPlaying}</h2>
-      {isPlaying ? (
-        <div className='get-question'>
-          <Button
-            className='game-buttons'
-            onClick={getQuestion}
-            disabled={isOn}
-          >
-            Get a question
-          </Button>
-          <p>Your current score: {playerScore}</p>
+      <div className='row'>
+        {curQuestion !== undefined && curQuestion !== null ? (
+          <Fragment>
+            <div className='game-field col-md'>
+              <h3 className='game-question'>
+                Current Question: {curQuestion.question}
+              </h3>
+              <Form className='game-answer' onSubmit={e => onSubmit(e)}>
+                <Form.Group controlId='answer'>
+                  <Form.Control
+                    type='text'
+                    placeholder='Answer here...'
+                    name='answer'
+                    value={answer}
+                    onChange={e => onChange(e)}
+                  />
+                </Form.Group>
+              </Form>
+            </div>
+          </Fragment>
+        ) : (
+          <h3>No current question</h3>
+        )}
+        <PlayerList gameId={gameId} />
+      </div>
+      <div className='row'>
+        <div className='col-12'>
+          <GameButtons gameId={gameId} />
         </div>
-      ) : (
-        <h3>No one currently playing</h3>
-      )}
-      {curQuestion !== undefined && curQuestion !== null ? (
-        <Fragment>
-          <div>
-            <h3 className='game-question'>
-              Current Question: {curQuestion.question}
-            </h3>
-            <h3>Number of players: {currentPlayers.length} </h3>
-            <Form className='game-answer' onSubmit={e => onSubmit(e)}>
-              <Form.Group controlId='answer'>
-                <Form.Control
-                  type='text'
-                  placeholder='Answer here...'
-                  name='answer'
-                  value={answer}
-                  onChange={e => onChange(e)}
-                />
-              </Form.Group>
-            </Form>
-            {timer}
-          </div>
-          <LinkContainer to='/findgame'>
-            <Button className='game-buttons' onClick={e => onLeave(e)}>
-              Leave Game
-            </Button>
-          </LinkContainer>
-          <PlayerList />
-        </Fragment>
-      ) : (
-        <h3>No current question</h3>
-      )}
+      </div>
     </div>
   );
 };

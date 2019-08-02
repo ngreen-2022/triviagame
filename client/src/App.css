@@ -35,14 +35,14 @@ ul {
 } */
 
 /* Utilities */
-.container {
+/* .container {
   max-width: 1100px;
   margin: auto;
   overflow: hidden;
   padding: 0 2rem;
   margin-top: 6rem;
   margin-bottom: 3rem;
-}
+} */
 
 /* Text Styles*/
 /* .x-large {
@@ -103,6 +103,10 @@ ul {
 /* Margin */
 .m {
   margin: 0.5rem;
+}
+
+.mt-6 {
+  margin-top: 6rem;
 }
 /* .m-1 {
   margin: 1rem;
@@ -308,14 +312,27 @@ ul {
 
 /* Game Page */
 .game {
-  display: grid;
-  height: 100%;
-  grid-template-columns: 4fr 2fr 1fr;
-  grid-template-rows: auto;
+  display: table;
+  width: 100%;
+  /* grid-template-columns: 4fr 1fr; */
+}
+
+.game-field {
+  display: table-cell;
+  width: 75%;
+}
+
+.player-list {
+  display: table-cell;
+  width: 330px;
+}
+
+/* .game-field {
+  grid-area: 'field';
+  grid-template-columns: 1 / -1;
   grid-template-areas:
-    'question' 'players'
-    'answer' 'players'
-    'buttons' 'players';
+    'question'
+    'answer';
 }
 
 .game-question {
@@ -324,10 +341,10 @@ ul {
 
 .game-answer {
   grid-area: 'answer';
-}
+} */
 
 .game-buttons {
-  grid-area: 'buttons';
+  /* grid-area: 'buttons'; */
   max-height: 40px;
   max-width: 200px;
 }

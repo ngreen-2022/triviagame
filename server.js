@@ -38,13 +38,9 @@ const io = socketIO(server, {
 });
 
 io.on('connection', socket => {
-  socket.on('new_player_joining', async room => {
-    try {
-      console.log('new player joining');
-      socket.to(room).emit('new_player_loaded');
-    } catch (err) {
-      console.log('err: ' + err.message);
-    }
+  socket.on('new player', room => {
+    console.log('new player to: ' + room);
+    socket.to(room).emit('player load');
   });
 
   socket.on('update_scores', room => {
@@ -56,7 +52,16 @@ io.on('connection', socket => {
     socket.join(room);
   });
 
+  // BUG ON LEAVE_PAGE
+  // What - When a player leaves the game room, remaining players do not receive updated questions
+  // Why - This function below is removing ALL sockets from that room, we only need to remove the socket id
+  //        of the leaving player
+  // FIX??? idk why but sessionid seems to work
+  // MORE TESTING NEEDED*****
+
   socket.on('leave_page', room => {
+    const sessionID = socket.id;
+    console.log('sesh id: ' + sessionID);
     socket.leave(room);
     console.log('leave_room hit');
     io.of('/')
@@ -66,11 +71,17 @@ io.on('connection', socket => {
           console.log('clients in the room: \n');
           console.log(clients);
           clients.forEach(function(socket_id) {
-            io.sockets.sockets[socket_id].leave(room);
+            if (socket_id === sessionID) {
+              io.sockets.sockets[socket_id].leave(room);
+            }
           });
         }
       });
     socket.to(room).emit('player_left');
+    io.in(room).clients((error, clients) => {
+      if (error) throw error;
+      console.log('after leaving clients: ' + clients);
+    });
   });
 
   socket.on('kill_socket', room => {

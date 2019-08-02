@@ -15,32 +15,28 @@ socketIOClient.Manager('http://localhost:5000', {
 const PlayerList = ({
   currentPlayers,
   gameId,
+  className,
   playerScore,
   sendChange,
   loadGameState
 }) => {
-  // useEffect(() => {
-  //   loadGameState(gameId);
-  //   console.log('curpl length: ' + currentPlayers.length);
-  // }, []);
-
   useEffect(() => {
     const socket = socketIOClient('http://localhost:5000');
     socket.emit('room', gameId);
-    socket.on('give_scores', () => {
-      console.log('received ping');
-      // loadGameState(gameId);
+    socket.on('player load', () => {
       setTimeout(() => {
+        console.log('hi');
         loadGameState(gameId);
       }, 1000);
     });
     return function cleanup() {
       socket.emit('kill_socket', gameId);
+      console.log('function dead');
     };
   }, []);
 
   return (
-    <div className='players'>
+    <div className='player-list'>
       {currentPlayers.map(player => (
         <PlayerCard
           key={player.playerId}
@@ -58,7 +54,6 @@ PlayerList.propTypes = {};
 const mapStateToProps = state => ({
   playerScore: state.game.playerScore,
   currentPlayers: state.game.currentPlayers,
-  gameId: state.game.gameId,
   sendChange: state.game.sendChange
 });
 

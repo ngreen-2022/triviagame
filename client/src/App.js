@@ -34,7 +34,7 @@ const App = () => {
         <Fragment>
           <Navbar />
           <Route exact path='/' component={Landing} />
-          <section className='container'>
+          <section className='container mt-6'>
             <Alert />
             <Switch>
               <Route exact path='/register' component={Register} />
