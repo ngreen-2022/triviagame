@@ -25,7 +25,6 @@ const PlayerList = ({
     socket.emit('room', gameId);
     socket.on('player load', () => {
       setTimeout(() => {
-        console.log('hi');
         loadGameState(gameId);
       }, 1000);
     });

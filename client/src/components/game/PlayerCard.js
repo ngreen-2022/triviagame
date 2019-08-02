@@ -19,6 +19,7 @@ const PlayerCard = ({
   });
   useEffect(() => {
     loadGameState(gameId);
+    console.log('remove this log');
     // setCardState({ ...cardState, score: scoreRes });
   }, [playerScore]);
 

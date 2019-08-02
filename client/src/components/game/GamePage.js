@@ -89,6 +89,7 @@ const GamePage = ({
       // dispatch action to update player score here
       updatePlayerScore(curQuestion.value, gameId);
       socket.emit('update_scores', gameId);
+      console.log('remove this');
       console.log('Correct');
     } else {
       setGameState({ ...gameState, isCorrect: false });

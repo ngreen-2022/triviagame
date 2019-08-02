@@ -39,7 +39,6 @@ const io = socketIO(server, {
 
 io.on('connection', socket => {
   socket.on('new player', room => {
-    console.log('new player to: ' + room);
     socket.to(room).emit('player load');
   });
 

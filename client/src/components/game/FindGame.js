@@ -62,6 +62,7 @@ const FindGame = ({
 
   const joinRoom = (e, id) => {
     e.preventDefault();
+    console.log('joining...');
 
     joinGame(id);
 
