@@ -39,7 +39,6 @@ const App = () => {
             <Switch>
               <Route exact path='/register' component={Register} />
               <Route exact path='/login' component={Login} />
-              {/* Playground */}
               <PrivateRouter exact path='/dashboard' component={Dashboard} />
               <PrivateRouter exact path='/findgame' component={FindGame} />
               <PrivateRouter exact path='/play/:id' component={GamePage} />

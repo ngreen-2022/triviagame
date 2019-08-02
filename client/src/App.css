@@ -327,22 +327,6 @@ ul {
   width: 330px;
 }
 
-/* .game-field {
-  grid-area: 'field';
-  grid-template-columns: 1 / -1;
-  grid-template-areas:
-    'question'
-    'answer';
-}
-
-.game-question {
-  grid-area: 'question';
-}
-
-.game-answer {
-  grid-area: 'answer';
-} */
-
 .game-buttons {
   /* grid-area: 'buttons'; */
   max-height: 40px;
