@@ -314,7 +314,6 @@ ul {
 .game {
   display: table;
   width: 100%;
-  /* grid-template-columns: 4fr 1fr; */
 }
 
 .game-field {

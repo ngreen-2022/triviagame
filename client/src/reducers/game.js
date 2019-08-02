@@ -11,7 +11,8 @@ import {
   BEGIN_GAME,
   JOIN_GAME,
   LEAVE_GAME,
-  GET_USER_SCORE
+  GET_USER_SCORE,
+  BEGIN_GAME_ACTION
 } from '../actions/types';
 
 const initialState = {
@@ -30,14 +31,21 @@ export default function(state = initialState, action) {
   const { type, payload } = action;
 
   switch (type) {
+    case BEGIN_GAME_ACTION:
+      return { ...state, loading: true };
     case GET_GAMES:
-      return { ...state, gamesList: payload };
+      return { ...state, gamesList: payload, loading: false };
     case CREATE_GAME:
       return {
         ...state,
         gameId: payload._id,
         currentPlayers: payload.players,
         loading: true
+      };
+    case DELETE_GAME_BY_ID:
+      return {
+        ...state,
+        gamesList: payload
       };
     case LOAD_GAME_STATE:
       return {

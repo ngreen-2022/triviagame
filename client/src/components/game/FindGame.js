@@ -1,34 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { Link, Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Spinner from '../layout/Spinner';
+import GameListing from './GameListing';
 // Actions
-import {
-  getGames,
-  createGame,
-  loadGameState,
-  joinGame
-} from '../../actions/game';
+import { getGames, createGame } from '../../actions/game';
 // Bootstrap
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 
-const FindGame = ({
-  gamesList,
-  gameId,
-  loading,
-  getGames,
-  createGame,
-  joinGame
-}) => {
+const FindGame = ({ gamesList, loading, getGames, createGame }) => {
   const [findState, setFindState] = useState({
     modalState: false,
     roomName: '',
-    isPublic: true,
-    gameId: '',
-    inGame: false
+    isPublic: true
   });
 
   const { modalState, roomName, isPublic } = findState;
@@ -60,49 +46,21 @@ const FindGame = ({
     }, 1000);
   };
 
-  const joinRoom = (e, id) => {
-    e.preventDefault();
-    console.log('joining...');
-
-    joinGame(id);
-
-    setFindState({ ...findState, gameId: id, inGame: true });
-  };
-
-  if (findState.inGame) {
-    return <Redirect to={`/play/${findState.gameId}`} />;
-  }
-
   return (
     <div>
       <h1>Find Game</h1>
-      <div className='gameList'>
-        {gamesList.map(game => (
-          <div key={game._id} className='gameItem'>
-            <h3>
-              {game.roomName} -{' '}
-              <span>Current Players: {game.players.length} </span>
-            </h3>
-            <div>
-              {game.isPublic ? (
-                <span>
-                  <i className='fas fa-unlock' /> Public
-                </span>
-              ) : (
-                <span>
-                  <i className='fas fa-lock' /> Private
-                </span>
-              )}
-              <Button
-                className='btn btn-success'
-                onClick={e => joinRoom(e, game._id)}
-              >
-                Join Game
-              </Button>
-            </div>
-          </div>
-        ))}
-      </div>
+      {loading ? (
+        <Spinner />
+      ) : (
+        <div className='gameList'>
+          {gamesList.length > 0 ? (
+            gamesList.map(game => <GameListing key={game._id} game={game} />)
+          ) : (
+            <h2>No games</h2>
+          )}
+        </div>
+      )}
+
       <>
         <Button variant='success' onClick={handleShow}>
           Create Game
@@ -152,11 +110,10 @@ FindGame.propTypes = {};
 
 const mapStateToProps = state => ({
   gamesList: state.game.gamesList,
-  gameId: state.game.gameId,
   loading: state.game.loading
 });
 
 export default connect(
   mapStateToProps,
-  { getGames, createGame, joinGame }
+  { getGames, createGame }
 )(FindGame);

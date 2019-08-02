@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {
   GET_GAMES,
+  BEGIN_GAME_ACTION,
   GET_GAME_BY_ID,
   CREATE_GAME,
   DELETE_GAME_BY_ID,
@@ -33,6 +34,16 @@ export const createGame = data => async dispatch => {
   }
 };
 
+export const deleteGame = id => async dispatch => {
+  try {
+    const res = await axios.delete(`/api/game/${id}`);
+
+    dispatch({ type: DELETE_GAME_BY_ID, payload: res.data });
+  } catch (err) {
+    dispatch({ type: GAME_ERROR });
+  }
+};
+
 export const joinGame = id => async dispatch => {
   try {
     const res = await axios.put(`/api/game/join/${id}`);
@@ -54,6 +65,7 @@ export const leaveGame = id => async dispatch => {
 };
 
 export const getGames = () => async dispatch => {
+  dispatch({ type: BEGIN_GAME_ACTION });
   try {
     const res = await axios.get('/api/game');
 

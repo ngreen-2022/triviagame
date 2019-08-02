@@ -1,34 +1,65 @@
-import React from 'react';
+import React, { useEffect, Fragment } from 'react';
+import { Button, Form } from 'react-bootstrap';
+
+import {
+  getCurrentProfile,
+  deleteAccount,
+  createProfile
+} from '../../actions/profile';
+import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import Spinner from '../layout/Spinner';
+
 import '../../App.css';
 
-const EditProfile = props => {
+const EditProfile = ({
+  getCurrentProfile,
+  createProfile,
+  auth: { user },
+  profile: { profile, loading }
+}) => {
+  useEffect(() => {
+    getCurrentProfile();
+  }, []);
   return (
-    <div className='editInfo'>
-      <h1>About Me</h1>
-      <form>
-        Bio: <input type='text' name='bio' />
-        <br />
-        Username:
-        <input type='text' name='username' />
-        <br />
-        Email:
-        <input type='text' name='email' />
-        <br />
-        Birthday:
-        <input type='text' name='birthday' />
-        <br />
-        Facebook:
-        <input type='text' name='facebook' />
-        <br />
-        Instagram
-        <input type='text' name='instagram' />
-        <br />
-      </form>
-      <button type='submit' value='Submit'>
-        Submit
-      </button>
-    </div>
+    <Fragment>
+      <div>
+        <Form>
+          <Form.Group controlId='formBasicEmail'>
+            <Form.Label>Email address</Form.Label>
+            <Form.Control type='text' placeholder='Enter email' />
+            <Form.Text className='text-muted' />
+          </Form.Group>
+
+          <Form.Group controlId='formBasicPassword'>
+            <Form.Label>Password</Form.Label>
+            <Form.Control type='text' placeholder='Password' />
+          </Form.Group>
+
+          <Button variant='primary' type='submit'>
+            Save
+          </Button>
+        </Form>
+      </div>
+    </Fragment>
   );
 };
 
-export default EditProfile;
+EditProfile.propTypes = {
+  getCurrentProfile: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired,
+  profile: PropTypes.object.isRequired,
+  deleteAccount: PropTypes.func.isRequired,
+  createProfile: PropTypes.func.isRequired
+};
+
+const mapStateToProps = state => ({
+  auth: state.auth,
+  profile: state.profile
+});
+
+export default connect(
+  mapStateToProps,
+  { createProfile, getCurrentProfile, deleteAccount }
+)(EditProfile);

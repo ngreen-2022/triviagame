@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { getCurrentProfile, deleteAccount } from '../../actions/profile';
 import Spinner from '../layout/Spinner';
 import LeaderBoard from './LeaderBoard';
-
+import Leaderboards from './Leaderboards';
 
 const Dashboard = ({
   getCurrentProfile,
@@ -26,22 +26,20 @@ const Dashboard = ({
         <i className='fas fa-user'> Welcome {user && user.name}</i>
       </p>
       {profile !== null ? (
-          <Fragment>
-           
+        <Fragment>
           <div className=''>
             <button className='btn btn-danger' onClick={() => deleteAccount()}>
               <i className='fas fa-user-minus' /> Delete My Account
             </button>
           </div>
-          
         </Fragment>
       ) : (
         <Fragment>
           <p>You have not yet created a profile, please add some info!</p>
-          <LeaderBoard/>
-          
         </Fragment>
       )}
+
+      <Leaderboards />
     </Fragment>
   );
 };

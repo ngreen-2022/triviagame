@@ -23,6 +23,7 @@ export const UPDATE_PLAYER_SCORE = 'UPDATE_PLAYER_SCORE';
 export const GAME_ERROR = 'GAME_ERROR';
 
 // Gamepage actions
+export const BEGIN_GAME_ACTION = 'BEGIN_GAME_ACTION';
 export const GET_GAMES = 'GET_GAMES';
 export const GET_GAME_BY_ID = 'GET_GAME_BY_ID';
 export const DELETE_GAME_BY_ID = 'DELETE_GAME_BY_ID';
@@ -31,4 +32,6 @@ export const JOIN_GAME = 'JOIN_GAME';
 export const GET_GAMES_ERROR = 'GET_GAMES_ERROR';
 export const GET_USER_SCORE = 'GET_USER_SCORE';
 export const LEAVE_GAME = 'LEAVE_GAME';
+
+// Profile actions
 export const BEGIN_PROFILE_ACTION = 'BEGIN_PROFILE_ACTION';

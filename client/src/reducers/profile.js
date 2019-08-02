@@ -43,8 +43,7 @@ export default function(state = initialState, action) {
     case BEGIN_PROFILE_ACTION:
       return {
         ...state,
-        profile: null,
-        loading: false
+        loading: true
       };
     default:
       return state;
