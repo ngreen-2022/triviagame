@@ -34,11 +34,7 @@ const ProfileSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   },
-<<<<<<< HEAD
   highScore: {
-=======
-  highScore:{
->>>>>>> 33389d2b39cf458376506696ff4df15a358a30e9
     type: Number,
     default: 0
   }
