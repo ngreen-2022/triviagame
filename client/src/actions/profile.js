@@ -91,7 +91,7 @@ export const createProfile = (
       headers: {
         'Content-Type': 'application/json'
       }
-    };
+    }; 
 
     const res = await axios.post('/api/profile', formData, config);
 
@@ -103,7 +103,7 @@ export const createProfile = (
     dispatch(setAlert(edit ? 'Profile Updated' : 'Profile Created', 'success'));
 
     if (!edit) {
-      history.push('/dashboard');
+      history.push('/me');
     }
   } catch (err) {
     const errors = err.response.data.errors;

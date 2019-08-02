@@ -40,7 +40,7 @@ const PlayerList = ({
   }, []);
 
   return (
-    <div className='container'>
+    <div className='players'>
       {currentPlayers.map(player => (
         <PlayerCard
           key={player.playerId}

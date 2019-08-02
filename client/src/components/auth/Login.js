@@ -3,6 +3,9 @@ import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { login } from '../../actions/auth';
+// Bootstrap
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 
 const Login = ({ login, isAuthenticated }) => {
   // This is a state hook, putting default values 'name' etc..
@@ -33,30 +36,35 @@ const Login = ({ login, isAuthenticated }) => {
       <p className='lead'>
         <i className='fas fa-user' /> Sign Into Your Account
       </p>
-      <form className='form' onSubmit={e => onSubmit(e)}>
-        <div className='form-group'>
-          <input
+      <Form onSubmit={e => onSubmit(e)}>
+        <Form.Group controlId='email'>
+          <Form.Label>Email Address</Form.Label>
+          <Form.Control
             type='email'
-            placeholder='Email Address'
+            placeholder='Enter Email'
             name='email'
             value={email}
             onChange={e => onChange(e)}
             required
           />
-        </div>
-        <div className='form-group'>
-          <input
+        </Form.Group>
+
+        <Form.Group controlId='password'>
+          <Form.Label>Password</Form.Label>
+          <Form.Control
             type='password'
-            placeholder='Password'
+            placeholder='password'
             name='password'
             value={password}
             onChange={e => onChange(e)}
-            minLength='6'
           />
-        </div>
-        <input type='submit' className='btn btn-primary' value='Login' />
-      </form>
-      <p className='my-1'>
+        </Form.Group>
+
+        <Button type='submit' className='btn-primary'>
+          Submit
+        </Button>
+      </Form>
+      <p className='mt-2 mb-2'>
         Don't have an account? <Link to='/register'>Sign Up</Link>
       </p>
     </Fragment>

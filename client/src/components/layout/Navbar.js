@@ -8,6 +8,9 @@ const Navbar = ({ auth: { isAuthenticated, loading }, logout }) => {
   const authLinks = (
     <ul>
       <li>
+        <Link to='/me'>My Profile</Link>
+      </li>
+      <li>
         <Link to='/profiles'>Profiles</Link>
       </li>
       <li>
@@ -19,6 +22,7 @@ const Navbar = ({ auth: { isAuthenticated, loading }, logout }) => {
           <span className='hide-sm'>Dashboard</span>
         </Link>
       </li>
+
       <li>
         <a onClick={logout} href='#!'>
           <i className='fas fa-sign-out-alt' />{' '}
