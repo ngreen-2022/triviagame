@@ -9,6 +9,8 @@ import Dashboard from './components/dashboard/Dashboard';
 import PrivateRouter from './components/routing/PrivateRouter';
 import GamePage from './components/game/GamePage';
 import FindGame from './components/game/FindGame';
+import Profile from './components/profile/Profile';
+import EditProfile from './components/profile/EditProfile';
 // Redux
 import { Provider } from 'react-redux';
 import store from './store';
@@ -41,6 +43,8 @@ const App = () => {
               <PrivateRouter exact path='/dashboard' component={Dashboard} />
               <PrivateRouter exact path='/findgame' component={FindGame} />
               <PrivateRouter exact path='/play/:id' component={GamePage} />
+              <PrivateRouter exact path='/me' component={Profile} />
+              <PrivateRouter exact path='/editme' component={EditProfile} />
             </Switch>
           </section>
         </Fragment>

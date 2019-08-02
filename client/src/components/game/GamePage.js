@@ -58,7 +58,7 @@ const GamePage = ({
   useEffect(() => {
     const socket = socketIOClient(endpoint);
     socket.emit('new_player_joining', gameId);
-    console.log('client initial load');
+    // console.log('client initial load');
     loadGameState(gameId);
     socket.emit('kill_socket', gameId);
   }, []);
