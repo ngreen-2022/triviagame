@@ -34,7 +34,7 @@ const GameButtons = ({ isPlaying, gameId, beginGame, leaveGame }) => {
   };
 
   return (
-    <div>
+    <div className='row justify-content-between'>
       {!isPlaying ? (
         <Button onClick={beginPlay}>Begin playing</Button>
       ) : (

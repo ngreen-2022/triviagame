@@ -11,8 +11,7 @@ const initialState = {
   // Will make request and pull all profile data in this profile object
   profile: null,
   // Will be for the list of profiles
-  profiles: [0,0,0,0,0],
-  repos: [],
+  profiles: [],
   loading: true,
   error: {}
 };
@@ -34,12 +33,6 @@ export default function(state = initialState, action) {
         profiles: payload,
         loading: false
       };
-    case GET_REPOS:
-      return {
-        ...state,
-        repos: payload,
-        loading: false
-      };
     case PROFILE_ERROR:
       return {
         ...state,
@@ -50,7 +43,6 @@ export default function(state = initialState, action) {
       return {
         ...state,
         profile: null,
-        repos: [],
         loading: false
       };
     default:

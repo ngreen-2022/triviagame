@@ -71,6 +71,7 @@ export const loadGameState = gameId => async dispatch => {
     const res = await axios.get(`/api/game/${gameId}`);
 
     console.log('response' + res.data.curQuestion);
+    console.log('playes: ' + res.data.players);
 
     dispatch({ type: LOAD_GAME_STATE, payload: res.data });
   } catch (err) {

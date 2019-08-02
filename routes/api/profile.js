@@ -52,7 +52,15 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { location, bio, status, facebook, twitter, instagram } = req.body;
+    const {
+      location,
+      bio,
+      status,
+      facebook,
+      twitter,
+      instagram,
+      highScore
+    } = req.body;
 
     // Build profile object
     const profileFields = {};
@@ -60,6 +68,7 @@ router.post(
     if (location) profileFields.location = location;
     if (bio) profileFields.bio = bio;
     if (status) profileFields.status = status;
+    if (highScore) profileFields.highScore = highScore;
 
     // Build social object
     profileFields.social = {};
